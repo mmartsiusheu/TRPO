@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="includes/head-html::head">
+</head>
+<body>
+<nav th:replace="includes/navigation::top-header"></nav>
+
+<div class="container-fluid pt-2">
+    <div class="card">
+        <div class="card-body">
+            <p class="h3 text-danger">Oopss..! Something goes wrong!</p>
+            <p class="h5">Don't worry. While we are trying to understand what happened you may browse the
+                <a class="font-weight-bold" th:href="@{/categories}" href="/">categories</a> and
+                <a class="font-weight-bold" th:href="@{/products}" href="/products">products</a> pages.</p>
+            <p th:text="${exception}"></p>
+            <p th:if="${response} != null" th:text="${response.message}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

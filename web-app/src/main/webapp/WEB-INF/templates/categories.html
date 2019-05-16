@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="includes/head-html::head">
+</head>
+
+<body>
+<nav th:replace="includes/navigation::top-header"></nav>
+<header class="pt-2">
+    <div class="container-fluid">
+        <div class="card">
+            <nav class="navbar">
+                <span th:text="#{category.list_name}" class="text-uppercase mr-auto">Категории</span>
+                <a class="float-right btn btn-green"
+                   th:href="@{/category}"
+                   href="category.html"
+                   th:title="#{category.add_new}"
+                   data-toggle="tooltip">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid pt-2">
+    <div class="row">
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="nav flex-column nav-pills" id="pills-tab" role="tablist" aria-orientation="vertical">
+                        <a th:each="category, iter:${categories}" th:text="${category.categoryName}" class="nav-link"
+                           th:id="${'pills-tab-' + iter.count}" data-toggle="pill"
+                           th:href="${'#pills-' + iter.count}" role="tab"
+                           th:aria-controls="${'pills-' + iter.count}"
+                           th:onclick="@{'getTable(this)'}"
+                           th:attr="data-id=${category.categoryId}, data-num=${iter.count}"
+                           data-updated="false"
+                           aria-selected="false">Category Name placeholder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9">
+            <div class="tab-content">
+                <div class="tab-pane fade"
+                     th:each="category, iter:${categories}"
+                     th:id="${'pills-' + iter.count}" role="tabpanel"
+                     th:aria-labelledby="${'pills-tab-' + iter.count}">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <p th:text="${category.categoryName}" class="h2">Краски и лаки</p>
+                                        </div>
+                                        <div class="col-2 h3">
+                                            <a th:href="@{'/category/' + ${category.categoryId}}"
+                                               th:title="#{category.edit}" data-toggle="tooltip"><i
+                                                    class="fa fa-pencil-alt"></i></a>
+                                            <span th:title="#{category.delete}" data-toggle="tooltip">
+                                                <a class="pl-3" data-toggle="modal"
+                                                   data-target="#userDialog"
+                                                   th:attr="data-id=${category.categoryId}"
+                                                   th:onclick="@{'deleteCategory(this)'}">
+                                                <i class="fa fa-trash"></i>
+                                            </a></span>
+                                        </div>
+                                    </div>
+                                    <small th:text="#{category.total_amount_of_products} + ': '
+                                            + ${category.productsAmount}"
+                                           th:id="${'product-amount-' + iter.count}">Товаров: 150
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body" th:id="${'table-place-' + iter.count}">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal window -->
+<div class="modal fade" id="userDialog" tabindex="-1" role="dialog" aria-labelledby="userDialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 th:text="#{navigation.confirmation_popup}" class="modal-title" id="exampleModalLabel">Подтвердите
+                    действие</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p th:text="#{category.delete_confirm_message}"
+                   class="h3 text-center">Вы точно хотите удалить выбранную категорию?</p>
+            </div>
+            <div class="modal-footer">
+                <a th:text="#{category.delete_confirm_no}" class="btn btn-outline-green" data-dismiss="modal">No</a>
+                <a th:text="#{category.delete_confirm_yes}" id="confirmDelete" class="btn btn-green">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    function getTable(element) {
+        $('#error-plate').remove();
+        if (element.dataset.updated === "false") {
+            $.ajax({
+                url: '/web/categories/info/' + element.dataset.id + '/subs',
+                dataType: "html",
+                success: function (data, textStatus) {
+                    $('#table-place-' + element.dataset.num).html(data);
+                    element.dataset.updated = "true";
+                }
+            });
+        }
+    }
+
+    function deleteCategory(element) {
+        document.getElementById("confirmDelete")
+            .href = "/web/categories/" + element.dataset.id;
+    }
+</script>
+</body>
+
+</html>

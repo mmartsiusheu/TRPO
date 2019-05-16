@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="includes/head-html::head">
+</head>
+
+<body>
+<nav th:replace="includes/navigation::top-header"></nav>
+
+<header class="pt-2">
+    <div class="container-fluid">
+        <div class="card">
+            <nav class="navbar">
+                <span th:text="${isNew} ? #{product.add_new} : #{product.edit}" class="text-uppercase mr-auto">Adding</span>
+                <a th:text="#{product.save}"
+                   th:onclick="@{document.forms['productForm'].submit(); return false;}"
+                   class="float-right btn btn-green">Добавить</a>
+                <a class="float-right btn btn-green"
+                   th:href="@{/products}"
+                   th:text="#{product.cancel}"
+                   href="categories.html">Back</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid pt-2">
+    <div class="card">
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div class="col-6">
+                    <p class="h2 text-center"
+                        th:text="#{product.details}">Данные продукта</p>
+                    <form id="productForm" th:object="${product}"
+                          th:action="@{${#httpServletRequest.servletPath}}"
+                          th:method="@{post}">
+
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            <p>Please fix errors below:</p>
+                        </div>
+
+                        <input id="productId"
+                               type="hidden"
+                               th:field="*{productId}"/>
+
+                        <input class="form-control pt-4" type="text"
+                               placeholder="Введите название продукта"
+                               th:field="*{productName}"
+                               th:placeholder="#{product.enter_name}"
+                               th:class="${#fields.hasErrors('productName')} ? 'form-control is-invalid mt-4' : 'form-control mt-4'"/>
+
+                        <div th:if="${#fields.hasErrors('productName')}"
+                             class="invalid-feedback"
+                             th:errors="*{productName}">[errors]
+                        </div>
+
+                        <input class="form-control pt-4" type="text"
+                               placeholder="Введите количество продукта"
+                               th:field="*{productAmount}"
+                               th:placeholder="#{product.enter_amount}"
+                               th:class="${#fields.hasErrors('productAmount')} ? 'form-control is-invalid mt-4' : 'form-control mt-4'"/>
+
+                        <div th:if="${#fields.hasErrors('productAmount')}"
+                             class="invalid-feedback"
+                             th:errors="*{productAmount}">[errors]
+                        </div>
+
+                        <select class="form-control mt-4" name="categoryId">
+                            <option th:each="category : ${categories}"
+                                    th:text="${category.categoryName}"
+                                    th:value="${category.categoryId}">
+                            </option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

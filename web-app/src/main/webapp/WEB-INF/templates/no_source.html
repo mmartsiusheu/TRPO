@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="includes/head-html::head">
+</head>
+<body>
+
+<div class="container-fluid pt-2 text-center h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="card">
+            <div class="card-body">
+                <p class="h3 text-danger">Oopss..! Something goes wrong!</p>
+                <p class="h4">We are sorry, but we have lost a connection to our server. We hope to get it back soon.</p>
+                <a th:href="@{${#httpServletRequest.servletPath}}">Refresh</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

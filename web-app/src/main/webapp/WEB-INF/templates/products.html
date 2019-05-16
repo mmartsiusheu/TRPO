@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="includes/head-html::head">
+</head>
+
+<body>
+<nav th:replace="includes/navigation::top-header"></nav>
+
+<header class="pt-2">
+    <div class="container-fluid">
+        <div class="card">
+            <nav class="navbar">
+                <div class="mr-auto">
+                    <span class="text-uppercase" th:text="#{product.list_name}">Список продуктов</span>
+                </div>
+                <a class="float-right btn btn-green"
+                   th:href="@{/product}"
+                   href="product.html"
+                   title="Добавить продукт"
+                   th:title="#{product.add_new}"
+                   data-toggle="tooltip">
+                    <i class="fa fa-plus"></i>
+                </a>
+                <a class="float-right btn btn-green"
+                   th:href="@{/products}"
+                   href="products.html"
+                   title="Обновить"
+                   th:title="#{product.refresh_list}"
+                   data-toggle="tooltip"
+                   th:onclick="@{document.forms['filterForm'].submit(); return false;}">
+                    <i class="fa fa-sync"></i>
+                </a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid pt-2">
+    <div class="row">
+        <div class="col-9">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped mt-4 text-center">
+                        <thead class="table-head text-white">
+                        <tr>
+                            <th scope="col" th:text="#{product.category}">Категории</th>
+                            <th scope="col" th:text="#{product.subcategory}">Подкатегория</th>
+                            <th scope="col" th:text="#{product.name}">Наименование</th>
+                            <th scope="col" th:text="#{product.date_added}">Дата добавления</th>
+                            <th scope="col" th:text="#{product.total_amount_of_products}">Количество товаров</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <th th:text="${product.categoryName}" scope="row">Кирпичи и блоки</th>
+                            <td th:text="${product.subCategoryName}">Кирпичи</td>
+                            <td th:text="${product.productName}">Кирпич красный</td>
+                            <td th:text="${product.dateAdded}">2018-01-01</td>
+                            <td th:text="${product.productAmount}">2500</td>
+                            <td>
+                                <a th:href="@{'/product/' + ${product.productId}}"
+                                   th:title="#{product.edit}">
+                                    <i class="fa fa-pencil-alt"></i></a>
+                                <span th:title="#{product.delete}" data-toggle="tooltip">
+                                <a class="pl-3"
+                                   data-toggle="modal"
+                                   data-target="#userDialog"
+                                   th:attr="data-id=${product.productId}"
+                                   th:onclick="@{'deleteProduct(this)'}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    <p th:text="#{product.filter.name}">Filters</p>
+                </div>
+                <div class="card-body">
+                    <form id="filterForm"
+                          th:action="@{'/products/filter'}"
+                          th:object="${filter}"
+                          th:method="@{post}">
+
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            <p>Please fix errors below:</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date-from" th:text="#{product.filter.from}">Date From</label>
+                            <input th:class="${#fields.hasErrors('dateBegin')} ? 'form-control is-invalid' : 'form-control'"
+                                   th:field="*{dateBegin}" class="form-control" type="date" id="date-from">
+                        </div>
+
+                        <div th:if="${#fields.hasErrors('dateBegin')}"
+                            class="text-danger"
+                             th:errors="*{dateBegin}">[errors]
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date-to" th:text="#{product.filter.to}">Date To</label>
+                            <input th:class="${#fields.hasErrors('dateBegin')} ? 'form-control is-invalid' : 'form-control'"
+                                   th:field="*{dateEnd}" class="form-control" type="date" id="date-to">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categories">Parent Categories</label>
+                            <select th:field="*{categoryId}" class="form-control mt-4" id="categories">
+                                <option value="">All</option>
+                                <option th:each="category : ${categories}"
+                                        th:text="${category.categoryName}"
+                                        th:value="${category.categoryId}">
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal window -->
+<div class="modal fade" id="userDialog" tabindex="-1" role="dialog" aria-labelledby="userDialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 th:text="#{navigation.confirmation_popup}" class="modal-title" id="exampleModalLabel">Подтвердите
+                    действие</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p th:text="#{category.delete_confirm_message}"
+                   class="h3 text-center">Вы точно хотите удалить выбранную категорию?</p>
+            </div>
+            <div class="modal-footer">
+                <a th:text="#{category.delete_confirm_no}" class="btn btn-outline-green" data-dismiss="modal">No</a>
+                <a th:text="#{category.delete_confirm_yes}" id="confirmDelete" class="btn btn-green">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function deleteProduct(element) {
+        document.getElementById("confirmDelete")
+            .href = "/web/products/" + element.dataset.id;
+    }
+</script>
+</html>

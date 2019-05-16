@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="includes/head-html::head">
+</head>
+
+<body>
+<nav th:replace="includes/navigation::top-header"></nav>
+
+<header class="pt-2">
+    <div class="container-fluid">
+        <div class="card">
+            <nav class="navbar">
+                <span th:text="${isNew} ? #{category.add_new} : #{category.edit}" class="text-uppercase mr-auto">Adding</span>
+                <a th:text="#{category.save}"
+                   th:onclick="@{document.forms['categoryForm'].submit(); return false;}"
+                   class="float-right btn btn-green">Добавить</a>
+                <a class="float-right btn btn-green"
+                   th:href="@{/categories}"
+                   th:text="#{category.cancel}"
+                   href="categories.html">Назад</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid pt-2">
+    <div class="card">
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div class="col-6">
+                    <p th:text="#{category.details}" class="h2 text-center">Данные категории</p>
+                    <form id="categoryForm" th:object="${category}"
+                          th:action="@{${#httpServletRequest.servletPath}}"
+                          th:method="@{post}">
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            <p>Please fix errors below:</p>
+                        </div>
+
+                        <input id="categoryId"
+                               type="hidden"
+                               th:field="*{categoryId}"/>
+                        <input class="form-control mt-4" type="text"
+                               placeholder="Введите название категории (подкатегории)"
+                               th:placeholder="#{category.enter_name}"
+                               th:field="*{categoryName}"
+                               th:class="${#fields.hasErrors('categoryName')} ? 'form-control is-invalid' : 'form-control'"/>
+                        <div th:if="${#fields.hasErrors('categoryName')}"
+                             class="invalid-feedback"
+                             th:errors="*{categoryName}">[errors]
+                        </div>
+
+                        <select class="form-control mt-4" name="parentId">
+                            <th:block th:if="${isNew} or *{parentId} == null or *{parentId} == 0 or ${productsAmount} == 0">
+                                <option value="" th:text="#{category.as_top_level}">Создать самостоятельную категорию</option>
+                            </th:block>
+                            <option th:each="parent : ${parentCategories}"
+                                    th:text="${parent.categoryName}"
+                                    th:value="${parent.categoryId}">
+                            </option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="includes/head-html::head">
+</head>
+<body>
+<table class="table table-striped mt-4 text-center">
+    <thead class="table-head text-white">
+    <tr>
+        <th scope="col" th:text="#{subcategory.name}">Подкатегория</th>
+        <th scope="col" th:text="#{subcategory.total_amount_of_products}">Количество товаров</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${subcategories != null && subcategories.isEmpty()}">
+        <td scope="row"></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr th:each="subcategory:${subcategories}">
+        <td th:text="${subcategory.categoryName}" scope="row">Лаковые</td>
+        <td th:text="${subcategory.productsAmount}">50</td>
+        <td>
+            <a
+                    th:href="@{'/category/' + ${subcategory.categoryId}}"
+                    th:title="#{subcategory.edit}">
+                <i class="fa fa-pencil-alt"></i></a>
+            <span th:title="#{subcategory.delete}" data-toggle="tooltip">
+            <a
+                    class="pl-3"
+                    data-toggle="modal"
+                    data-target="#userDialog"
+                    th:attr="data-id=${subcategory.categoryId}"
+                    th:onclick="@{'deleteCategory(this)'}">
+                    <i class="fa fa-trash"></i>
+            </a>
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

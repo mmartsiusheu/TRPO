@@ -1,0 +1,18 @@
+body {
+    background-color: #388e3c10;
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: #388e3c;
+}
+
+.table-striped > tbody > tr:nth-child(2n) > td, .table-striped > tbody > tr:nth-child(2n) > th {
+    background-color: #388e3c31;
+ }
+
+.table-head{
+    background-color: #388e3c;
+}
+a {
+    color: black;
+}
